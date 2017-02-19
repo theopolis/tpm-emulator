@@ -4162,6 +4162,13 @@ int tpm_handle_command(const uint8_t *in, uint32_t in_size, uint8_t **out, uint3
   /* audit request */
   tpm_audit_request(req.ordinal, &req);
 
+  if (req.ordinal == TPM_ORD_TestHardwareReset) {
+    info("TestHardwareReset received\n");
+    tpm_emulator_shutdown();
+    tpm_emulator_init(1, tpmConf);
+    return -1;
+  }
+
   /* execute command */
   tpm_execute_command(&req, &rsp);
 

@@ -133,7 +133,7 @@ typedef UINT32 TPM_FAMILY_OPERATION;
  *
  * The LSB is used to indicate the entity type. The MSB is used to
  * indicate the ADIP encryption scheme when applicable.
- * 
+ *
  * For compatibility with TPM 1.1, some values are maintained.
  */
 /* LSB Values */
@@ -350,7 +350,7 @@ typedef struct tdTPM_KEY_HANDLE_LIST {
 #define TPM_KEY_LEGACY          0x0015
 #define TPM_KEY_MIGRATE         0x0016
 
-/* 
+/*
  * Encryption Schemes ([TPM_Part2], Section 5.8.1)
  */
 #define TPM_ES_NONE                    0x0001
@@ -656,6 +656,7 @@ typedef struct tdTPM_CMK_MA_APPROVAL {
 #define TPM_ORD_ReleaseTransportSigned          232
 #define TPM_ORD_GetTicks                        241
 #define TPM_ORD_TickStampBlob                   242
+#define TPM_ORD_TestHardwareReset               255
 #define TPM_ORD_MAX                             256
 
 /*
@@ -2420,7 +2421,7 @@ typedef struct tdTPM_CONTEXT_SENSITIVE {
  */
 
 /*
- * TPM_REQUEST 
+ * TPM_REQUEST
  * TPM command request
  */
 typedef struct tdTPM_REQUEST {
