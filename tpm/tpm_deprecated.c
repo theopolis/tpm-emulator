@@ -1,4 +1,4 @@
-/* Software-based Trusted Platform Module (TPM) Emulator
+ /* Software-based Trusted Platform Module (TPM) Emulator
  * Copyright (C) 2004-2010 Mario Strasser <mast@gmx.net>
  *               2005-2008 Heiko Stamer <stamer@gaos.org>
  *
@@ -29,10 +29,10 @@
 
 /*
  * Deprecated commands ([TPM_Part3], Section 28)
- * This section covers the commands that were in version 1.1 but now have 
- * new functionality in other functions. The deprecated commands are still 
- * available in 1.2 but all new software should use the new functionality. 
- * There is no requirement that the deprecated commands work with new 
+ * This section covers the commands that were in version 1.1 but now have
+ * new functionality in other functions. The deprecated commands are still
+ * available in 1.2 but all new software should use the new functionality.
+ * There is no requirement that the deprecated commands work with new
  * structures.
  */
 
@@ -48,7 +48,7 @@ TPM_RESULT TPM_Terminate_Handle(TPM_AUTHHANDLE handle)
   return TPM_FlushSpecific(handle, TPM_RT_AUTH);
 }
 
-TPM_RESULT TPM_SaveKeyContext(TPM_KEY_HANDLE keyHandle,  
+TPM_RESULT TPM_SaveKeyContext(TPM_KEY_HANDLE keyHandle,
                               UINT32 *keyContextSize, BYTE **keyContextBlob)
 {
   TPM_RESULT res;
@@ -74,13 +74,13 @@ TPM_RESULT TPM_LoadKeyContext(UINT32 keyContextSize,
   TPM_CONTEXT_BLOB contextBlob;
   UINT32 len = keyContextSize;
   info("TPM_LoadKeyContext()");
-  if (tpm_unmarshal_TPM_CONTEXT_BLOB(&keyContextBlob, 
+  if (tpm_unmarshal_TPM_CONTEXT_BLOB(&keyContextBlob,
       &len, &contextBlob)) return TPM_FAIL;
-  return TPM_LoadContext(TPM_INVALID_HANDLE, FALSE, keyContextSize, 
+  return TPM_LoadContext(TPM_INVALID_HANDLE, FALSE, keyContextSize,
                          &contextBlob, keyHandle);
 }
 
-TPM_RESULT TPM_SaveAuthContext(TPM_AUTHHANDLE authHandle,  
+TPM_RESULT TPM_SaveAuthContext(TPM_AUTHHANDLE authHandle,
                                UINT32 *authContextSize, BYTE **authContextBlob)
 {
   TPM_RESULT res;
@@ -100,19 +100,19 @@ TPM_RESULT TPM_SaveAuthContext(TPM_AUTHHANDLE authHandle,
   return res;
 }
 
-TPM_RESULT TPM_LoadAuthContext(UINT32 authContextSize, BYTE *authContextBlob, 
+TPM_RESULT TPM_LoadAuthContext(UINT32 authContextSize, BYTE *authContextBlob,
                                TPM_KEY_HANDLE *authHandle)
 {
   TPM_CONTEXT_BLOB contextBlob;
   UINT32 len = authContextSize;
   info("TPM_LoadAuthContext()");
-  if (tpm_unmarshal_TPM_CONTEXT_BLOB(&authContextBlob, 
+  if (tpm_unmarshal_TPM_CONTEXT_BLOB(&authContextBlob,
       &len, &contextBlob)) return TPM_FAIL;
-  return TPM_LoadContext(TPM_INVALID_HANDLE, FALSE, authContextSize, 
+  return TPM_LoadContext(TPM_INVALID_HANDLE, FALSE, authContextSize,
                          &contextBlob, authHandle);
 }
 
-TPM_RESULT TPM_DirWriteAuth(TPM_DIRINDEX dirIndex, 
+TPM_RESULT TPM_DirWriteAuth(TPM_DIRINDEX dirIndex,
                             TPM_DIRVALUE *newContents, TPM_AUTH *auth1)
 {
   TPM_RESULT res;
@@ -153,7 +153,7 @@ TPM_RESULT TPM_ChangeAuthAsymStart(TPM_KEY_HANDLE idHandle,
   TPM_KEY ephKey;
   UINT32 len, size;
   BYTE *ptr, *buf;
-  
+
   info("TPM_ChangeAuthAsymStart()");
   /* 1. The TPM SHALL verify the AuthData to use the TPM identity key held in
         idHandle. The TPM MUST verify that the key is a TPM identity key. */
@@ -161,7 +161,7 @@ TPM_RESULT TPM_ChangeAuthAsymStart(TPM_KEY_HANDLE idHandle,
     idKey = tpm_get_key(idHandle);
     if (idKey == NULL) return TPM_INVALID_KEYHANDLE;
     /* verify authorization */
-    if (auth1->authHandle != TPM_INVALID_HANDLE 
+    if (auth1->authHandle != TPM_INVALID_HANDLE
       || idKey->authDataUsage != TPM_AUTH_NEVER) {
         res = tpm_verify_auth(auth1, idKey->usageAuth, idHandle);
         if (res != TPM_SUCCESS) return res;
@@ -171,7 +171,7 @@ TPM_RESULT TPM_ChangeAuthAsymStart(TPM_KEY_HANDLE idHandle,
   /* 2. The TPM SHALL validate the algorithm parameters for the key to create
         from the tempKey parameter. */
   /* 3. Recommended key type is RSA */
-  /* 4. Minimum RSA key size MUST is 512 bits, recommended RSA key size 
+  /* 4. Minimum RSA key size MUST is 512 bits, recommended RSA key size
         is 1024 */
   /* 5. For other key types the minimum key size strength MUST be
         comparable to RSA 512 */
@@ -195,9 +195,9 @@ TPM_RESULT TPM_ChangeAuthAsymStart(TPM_KEY_HANDLE idHandle,
     }
     /* setup private key store */
     store.payload = TPM_PT_ASYM;
-    memcpy(store.usageAuth, tpmData.permanent.data.tpmProof.nonce, 
+    memcpy(store.usageAuth, tpmData.permanent.data.tpmProof.nonce,
       sizeof(TPM_SECRET));
-    memcpy(store.migrationAuth, tpmData.permanent.data.tpmProof.nonce, 
+    memcpy(store.migrationAuth, tpmData.permanent.data.tpmProof.nonce,
       sizeof(TPM_SECRET));
     store.privKey.keyLength = key_length >> 4;
     store.privKey.key = tpm_malloc(store.privKey.keyLength);
@@ -253,7 +253,7 @@ TPM_RESULT TPM_ChangeAuthAsymStart(TPM_KEY_HANDLE idHandle,
       debug("TPM_ChangeAuthAsymStart(): tpm_compute_key_digest() failed.");
       return TPM_FAIL;
     }
-    if (tpm_encrypt_private_key(&tpmData.permanent.data.srk, &store, 
+    if (tpm_encrypt_private_key(&tpmData.permanent.data.srk, &store,
       ephKey.encData, &ephKey.encDataSize)) {
       tpm_free(store.privKey.key);
       tpm_free(ephKey.pubKey.key);
@@ -282,11 +282,11 @@ TPM_RESULT TPM_ChangeAuthAsymStart(TPM_KEY_HANDLE idHandle,
   outTempKey->algorithmParms.encScheme = ephKey.algorithmParms.encScheme;
   outTempKey->algorithmParms.sigScheme = ephKey.algorithmParms.sigScheme;
   outTempKey->algorithmParms.parmSize = ephKey.algorithmParms.parmSize;
-  outTempKey->algorithmParms.parms.rsa.keyLength = 
+  outTempKey->algorithmParms.parms.rsa.keyLength =
     ephKey.algorithmParms.parms.rsa.keyLength;
-  outTempKey->algorithmParms.parms.rsa.numPrimes = 
+  outTempKey->algorithmParms.parms.rsa.numPrimes =
     ephKey.algorithmParms.parms.rsa.numPrimes;
-  outTempKey->algorithmParms.parms.rsa.exponentSize = 
+  outTempKey->algorithmParms.parms.rsa.exponentSize =
     ephKey.algorithmParms.parms.rsa.exponentSize;
   outTempKey->PCRInfoSize = ephKey.PCRInfoSize;
   outTempKey->pubKey.keyLength = ephKey.pubKey.keyLength;
@@ -310,11 +310,11 @@ TPM_RESULT TPM_ChangeAuthAsymStart(TPM_KEY_HANDLE idHandle,
     certifyInfo->algorithmParms.encScheme = ephKey.algorithmParms.encScheme;
     certifyInfo->algorithmParms.sigScheme = ephKey.algorithmParms.sigScheme;
     certifyInfo->algorithmParms.parmSize = ephKey.algorithmParms.parmSize;
-    certifyInfo->algorithmParms.parms.rsa.keyLength = 
+    certifyInfo->algorithmParms.parms.rsa.keyLength =
       ephKey.algorithmParms.parms.rsa.keyLength;
-    certifyInfo->algorithmParms.parms.rsa.numPrimes = 
+    certifyInfo->algorithmParms.parms.rsa.numPrimes =
       ephKey.algorithmParms.parms.rsa.numPrimes;
-    certifyInfo->algorithmParms.parms.rsa.exponentSize = 
+    certifyInfo->algorithmParms.parms.rsa.exponentSize =
       ephKey.algorithmParms.parms.rsa.exponentSize;
     memcpy(&certifyInfo->pubkeyDigest, &store.pubDataDigest, sizeof(TPM_DIGEST));
     memcpy(&certifyInfo->data, antiReplay, sizeof(TPM_NONCE));
@@ -362,8 +362,8 @@ TPM_RESULT TPM_ChangeAuthAsymFinish(TPM_KEY_HANDLE parentHandle,
   BYTE *ptr, *buf;
   TPM_SECRET oldAuthSecret;
   TPM_HMAC b1;
-  
-  
+
+
   info("TPM_ChangeAuthAsymFinish()");
   /* 1. The TPM SHALL validate that the authHandle parameter authorizes
         use of the key in parentHandle. */
@@ -371,7 +371,7 @@ TPM_RESULT TPM_ChangeAuthAsymFinish(TPM_KEY_HANDLE parentHandle,
     parentKey = tpm_get_key(parentHandle);
     if (parentKey == NULL) return TPM_INVALID_KEYHANDLE;
     /* verify authorization */
-    if (auth1->authHandle != TPM_INVALID_HANDLE 
+    if (auth1->authHandle != TPM_INVALID_HANDLE
       || parentKey->authDataUsage != TPM_AUTH_NEVER) {
         res = tpm_verify_auth(auth1, parentKey->usageAuth, parentHandle);
         if (res != TPM_SUCCESS) return res;
@@ -414,7 +414,7 @@ TPM_RESULT TPM_ChangeAuthAsymFinish(TPM_KEY_HANDLE parentHandle,
   len = newAuthSize;
   buf = ptr = tpm_malloc(len);
   if (buf == NULL) return TPM_NOSPACE;
-  if (tpm_rsa_decrypt(&ephKey->key, scheme, encNewAuth, newAuthSize, 
+  if (tpm_rsa_decrypt(&ephKey->key, scheme, encNewAuth, newAuthSize,
     buf, &size)
     || (len = size) == 0
     || tpm_unmarshal_TPM_CHANGEAUTH_VALIDATE(&ptr, &len, &a1)) {
@@ -451,14 +451,14 @@ TPM_RESULT TPM_ChangeAuthAsymFinish(TPM_KEY_HANDLE parentHandle,
         the entity type. The key to encrypt with is parentHandle. */
   switch (entityType) {
     case TPM_ET_DATA:
-      if (tpm_encrypt_sealed_data(parentKey, &e1_seal, 
+      if (tpm_encrypt_sealed_data(parentKey, &e1_seal,
         *outData, outDataSize)) {
           tpm_free(outData);
           return TPM_ENCRYPT_ERROR;
       }
       break;
     case TPM_ET_KEY:
-      if (tpm_encrypt_private_key(parentKey, &e1_store, 
+      if (tpm_encrypt_private_key(parentKey, &e1_store,
         *outData, outDataSize)) {
           tpm_free(outData);
           return TPM_ENCRYPT_ERROR;
@@ -489,7 +489,7 @@ TPM_RESULT TPM_Reset()
   info("TPM_Reset()");
   /* invalidate all authorization sessions */
   for (i = 0; i < TPM_MAX_SESSIONS; i++) {
-    TPM_SESSION_DATA *session = &tpmData.stany.data.sessions[i]; 
+    TPM_SESSION_DATA *session = &tpmData.stany.data.sessions[i];
     if (session->type == TPM_ST_OIAP || session->type == TPM_ST_OSAP)
       memset(session, 0, sizeof(*session));
   }
@@ -508,7 +508,7 @@ TPM_RESULT TPM_CertifySelfTest(TPM_KEY_HANDLE keyHandle, TPM_NONCE *antiReplay,
   /* perform self test */
   res = TPM_SelfTestFull();
   if (res != TPM_SUCCESS) return res;
-  /* verify authorization */ 
+  /* verify authorization */
   if (auth1->authHandle != TPM_INVALID_HANDLE
       || key->authDataUsage != TPM_AUTH_NEVER) {
     res = tpm_verify_auth(auth1, key->usageAuth, keyHandle);
@@ -535,6 +535,6 @@ TPM_RESULT TPM_OwnerReadPubek(TPM_AUTH *auth1, TPM_PUBKEY *pubEndorsementKey)
   res = tpm_verify_auth(auth1, tpmData.permanent.data.ownerAuth, TPM_KH_OWNER);
   if (res != TPM_SUCCESS) return res;
   res = tpm_get_pubek(pubEndorsementKey);
-  if (res != TPM_SUCCESS) return res; 
+  if (res != TPM_SUCCESS) return res;
   return TPM_SUCCESS;
 }

@@ -29,12 +29,12 @@ void TPM_Init(TPM_STARTUP_TYPE startupType)
   info("TPM_Init()");
   /* startup the TPM */
   tpmData.stany.flags.postInitialise = TRUE;
-  TPM_SelfTestFull();
-  TPM_Startup(startupType);
+  //TPM_SelfTestFull();
+  //TPM_Startup(startupType);
 }
 
 #define SET_TO_ZERO(a) memset(a, 0x00, sizeof(*a))
-#define SET_TO_0xFF(a) memset(a, 0xff, sizeof(*a)) 
+#define SET_TO_0xFF(a) memset(a, 0xff, sizeof(*a))
 #define SET_TO_RAND(a) tpm_get_random_bytes(a, sizeof(*a))
 
 TPM_RESULT TPM_Startup(TPM_STARTUP_TYPE startupType)
@@ -104,7 +104,7 @@ TPM_RESULT TPM_Startup(TPM_STARTUP_TYPE startupType)
 TPM_RESULT TPM_SaveState()
 {
   info("TPM_SaveState()");
-  if (tpmData.permanent.flags.selfTestSucceeded && !tpmData.stclear.flags.deactivated) { 
+  if (tpmData.permanent.flags.selfTestSucceeded && !tpmData.stclear.flags.deactivated) {
     return (tpm_store_permanent_data()) ? TPM_FAIL : TPM_SUCCESS;
   } else {
     debug("TPM is deactivated or in fail-stop mode, thus the permanent data is not stored");

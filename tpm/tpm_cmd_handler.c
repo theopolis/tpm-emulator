@@ -94,7 +94,7 @@ UINT32 tpm_get_out_param_offset(TPM_COMMAND_CODE ordinal)
       return 0;
   }
 }
-  
+
 void tpm_compute_in_param_digest(TPM_REQUEST *req)
 {
   tpm_sha1_ctx_t sha1;
@@ -122,7 +122,7 @@ void tpm_compute_out_param_digest(TPM_COMMAND_CODE ordinal, TPM_RESPONSE *rsp)
   tpm_sha1_update_be32(&sha1, ordinal);
   tpm_sha1_update(&sha1, rsp->param + offset, rsp->paramSize - offset);
   tpm_sha1_final(&sha1, rsp->auth1->digest);
-  if (rsp->auth2 != NULL) memcpy(rsp->auth2->digest, 
+  if (rsp->auth2 != NULL) memcpy(rsp->auth2->digest,
     rsp->auth1->digest, sizeof(rsp->auth1->digest));
 }
 
@@ -284,7 +284,7 @@ static TPM_RESULT execute_TPM_TakeOwnership(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_TPM_KEY(&ptr, &len, &srkParams)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_TakeOwnership(protocolID, encOwnerAuthSize, encOwnerAuth, 
+  res = TPM_TakeOwnership(protocolID, encOwnerAuthSize, encOwnerAuth,
     encSrkAuthSize, encSrkAuth, &srkParams, &req->auth1, &srkPub);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -590,7 +590,7 @@ static TPM_RESULT execute_TPM_Seal(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_BLOB(&ptr, &len, &inData, inDataSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_Seal(keyHandle, &encAuth, pcrInfoSize, &pcrInfo, inDataSize, inData, 
+  res = TPM_Seal(keyHandle, &encAuth, pcrInfoSize, &pcrInfo, inDataSize, inData,
     &req->auth1, &sealedData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -694,7 +694,7 @@ static TPM_RESULT execute_TPM_CreateWrapKey(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_TPM_KEY(&ptr, &len, &keyInfo)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_CreateWrapKey(parentHandle, &dataUsageAuth, &dataMigrationAuth, 
+  res = TPM_CreateWrapKey(parentHandle, &dataUsageAuth, &dataMigrationAuth,
     &keyInfo, &req->auth1, &wrappedKey);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -824,7 +824,7 @@ static TPM_RESULT execute_TPM_Sealx(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_BLOB(&ptr, &len, &inData, inDataSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_Sealx(keyHandle, &encAuth, pcrInfoSize, &pcrInfo, inDataSize, inData, 
+  res = TPM_Sealx(keyHandle, &encAuth, pcrInfoSize, &pcrInfo, inDataSize, inData,
     &req->auth1, &sealedData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -865,7 +865,7 @@ static TPM_RESULT execute_TPM_CreateMigrationBlob(TPM_REQUEST *req, TPM_RESPONSE
       || tpm_unmarshal_BLOB(&ptr, &len, &encData, encDataSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_CreateMigrationBlob(parentHandle, migrationType, &migrationKeyAuth, encDataSize, 
+  res = TPM_CreateMigrationBlob(parentHandle, migrationType, &migrationKeyAuth, encDataSize,
     encData, &req->auth1, &req->auth2, &randomSize, &random, &outDataSize, &outData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -908,7 +908,7 @@ static TPM_RESULT execute_TPM_ConvertMigrationBlob(TPM_REQUEST *req, TPM_RESPONS
       || tpm_unmarshal_BLOB(&ptr, &len, &random, randomSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_ConvertMigrationBlob(parentHandle, inDataSize, inData, randomSize, 
+  res = TPM_ConvertMigrationBlob(parentHandle, inDataSize, inData, randomSize,
     random, &req->auth1, &outDataSize, &outData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -977,7 +977,7 @@ static TPM_RESULT execute_TPM_MigrateKey(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_BLOB(&ptr, &len, &inData, inDataSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_MigrateKey(maKeyHandle, &pubKey, inDataSize, inData, 
+  res = TPM_MigrateKey(maKeyHandle, &pubKey, inDataSize, inData,
     &req->auth1, &outDataSize, &outData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -1096,7 +1096,7 @@ static TPM_RESULT execute_TPM_CMK_CreateTicket(TPM_REQUEST *req, TPM_RESPONSE *r
       || tpm_unmarshal_BLOB(&ptr, &len, &signatureValue, signatureValueSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_CMK_CreateTicket(&verificationKey, &signedData, signatureValueSize, 
+  res = TPM_CMK_CreateTicket(&verificationKey, &signedData, signatureValueSize,
     signatureValue, &req->auth1, &sigTicket);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -1204,7 +1204,7 @@ static TPM_RESULT execute_TPM_CMK_ConvertMigration(TPM_REQUEST *req, TPM_RESPONS
       || tpm_unmarshal_BLOB(&ptr, &len, &random, randomSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_CMK_ConvertMigration(parentHandle, &restrictTicket, &sigTicket, 
+  res = TPM_CMK_ConvertMigration(parentHandle, &restrictTicket, &sigTicket,
     &migratedKey, &msaList, randomSize, random, &req->auth1, &outDataSize,
     &outData);
   if (res != TPM_SUCCESS) return res;
@@ -1239,7 +1239,7 @@ static TPM_RESULT execute_TPM_CreateMaintenanceArchive(TPM_REQUEST *req, TPM_RES
   if (tpm_unmarshal_BOOL(&ptr, &len, &generateRandom)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_CreateMaintenanceArchive(generateRandom, &req->auth1, &randomSize, 
+  res = TPM_CreateMaintenanceArchive(generateRandom, &req->auth1, &randomSize,
     &random, &archiveSize, &archive);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -1544,7 +1544,7 @@ static TPM_RESULT execute_TPM_CertifyKey(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_TPM_NONCE(&ptr, &len, &antiReplay)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_CertifyKey(certHandle, keyHandle, &antiReplay, &req->auth1, 
+  res = TPM_CertifyKey(certHandle, keyHandle, &antiReplay, &req->auth1,
     &req->auth2, &certifyInfo, &outDataSize, &outData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -1585,7 +1585,7 @@ static TPM_RESULT execute_TPM_CertifyKey2(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_TPM_NONCE(&ptr, &len, &antiReplay)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_CertifyKey2(keyHandle, certHandle, &migrationPubDigest, &antiReplay, 
+  res = TPM_CertifyKey2(keyHandle, certHandle, &migrationPubDigest, &antiReplay,
     &req->auth1, &req->auth2, &certifyInfo, &outDataSize, &outData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -1655,7 +1655,7 @@ static TPM_RESULT execute_TPM_CreateRevocableEK(TPM_REQUEST *req, TPM_RESPONSE *
       || tpm_unmarshal_TPM_NONCE(&ptr, &len, &inputEKreset)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_CreateRevocableEK(&antiReplay, &keyInfo, generateReset, 
+  res = TPM_CreateRevocableEK(&antiReplay, &keyInfo, generateReset,
     &inputEKreset, &pubEndorsementKey, &Checksum, &outputEKreset);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -1773,7 +1773,7 @@ static TPM_RESULT execute_TPM_MakeIdentity(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_TPM_KEY(&ptr, &len, &idKeyParams)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_MakeIdentity(&identityAuth, &labelPrivCADigest, &idKeyParams, 
+  res = TPM_MakeIdentity(&identityAuth, &labelPrivCADigest, &idKeyParams,
     &req->auth1, &req->auth2, &idKey, &identityBindingSize, &identityBinding);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -1815,7 +1815,7 @@ static TPM_RESULT execute_TPM_ActivateIdentity(TPM_REQUEST *req, TPM_RESPONSE *r
   if (symmetricKey.data == NULL)
     return TPM_NOSPACE;
   /* execute command */
-  res = TPM_ActivateIdentity(idKeyHandle, blobSize, blob, &req->auth1, 
+  res = TPM_ActivateIdentity(idKeyHandle, blobSize, blob, &req->auth1,
     &req->auth2, &symmetricKey);
   if (res != TPM_SUCCESS) {
     free_TPM_SYMMETRIC_KEY(symmetricKey);
@@ -1972,11 +1972,11 @@ static TPM_RESULT execute_TPM_Quote2(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_BOOL(&ptr, &len, &addVersion)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_Quote2(keyHandle, &externalData, &targetPCR, addVersion, 
+  res = TPM_Quote2(keyHandle, &externalData, &targetPCR, addVersion,
     &req->auth1, &pcrData, &versionInfoSize, &versionInfo, &sigSize, &sig);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
-  rsp->paramSize = len = sizeof_TPM_PCR_INFO_SHORT(pcrData) + 4 
+  rsp->paramSize = len = sizeof_TPM_PCR_INFO_SHORT(pcrData) + 4
     + versionInfoSize + 4 + sigSize;
   rsp->param = ptr = tpm_malloc(len);
   if (ptr == NULL
@@ -2019,7 +2019,7 @@ static TPM_RESULT execute_TPM_ChangeAuth(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_BLOB(&ptr, &len, &encData, encDataSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_ChangeAuth(parentHandle, protocolID, &newAuth, entityType, encDataSize, 
+  res = TPM_ChangeAuth(parentHandle, protocolID, &newAuth, entityType, encDataSize,
     encData, &req->auth1, &req->auth2, &outDataSize, &outData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2096,7 +2096,7 @@ static TPM_RESULT execute_TPM_OSAP(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_TPM_NONCE(&ptr, &len, &nonceOddOSAP)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_OSAP(entityType, entityValue, &nonceOddOSAP, &authHandle, 
+  res = TPM_OSAP(entityType, entityValue, &nonceOddOSAP, &authHandle,
     &nonceEven, &nonceEvenOSAP);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2189,7 +2189,7 @@ static TPM_RESULT execute_TPM_Delegate_Manage(TPM_REQUEST *req, TPM_RESPONSE *rs
       || tpm_unmarshal_BLOB(&ptr, &len, &opData, opDataSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_Delegate_Manage(familyID, opFlag, opDataSize, opData, 
+  res = TPM_Delegate_Manage(familyID, opFlag, opDataSize, opData,
     &req->auth1, &retDataSize, &retData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2225,7 +2225,7 @@ static TPM_RESULT execute_TPM_Delegate_CreateKeyDelegation(TPM_REQUEST *req, TPM
       || tpm_unmarshal_TPM_ENCAUTH(&ptr, &len, &delAuth)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_Delegate_CreateKeyDelegation(keyHandle, &publicInfo, &delAuth, 
+  res = TPM_Delegate_CreateKeyDelegation(keyHandle, &publicInfo, &delAuth,
     &req->auth1, &blob);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2262,7 +2262,7 @@ static TPM_RESULT execute_TPM_Delegate_CreateOwnerDelegation(TPM_REQUEST *req, T
       || tpm_unmarshal_TPM_ENCAUTH(&ptr, &len, &delAuth)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_Delegate_CreateOwnerDelegation(increment, &publicInfo, &delAuth, 
+  res = TPM_Delegate_CreateOwnerDelegation(increment, &publicInfo, &delAuth,
     &req->auth1, &blob);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2345,7 +2345,7 @@ static TPM_RESULT execute_TPM_Delegate_UpdateVerification(TPM_REQUEST *req, TPM_
       || tpm_unmarshal_BLOB(&ptr, &len, &inputData, inputSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_Delegate_UpdateVerification(inputSize, inputData, 
+  res = TPM_Delegate_UpdateVerification(inputSize, inputData,
     &req->auth1, &outputSize, &outputData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2657,7 +2657,7 @@ static TPM_RESULT execute_TPM_TickStampBlob(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_TPM_DIGEST(&ptr, &len, &digestToStamp)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_TickStampBlob(keyHandle, &antiReplay, &digestToStamp, &req->auth1, 
+  res = TPM_TickStampBlob(keyHandle, &antiReplay, &digestToStamp, &req->auth1,
     &currentTicks, &sigSize, &sig);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2698,7 +2698,7 @@ static TPM_RESULT execute_TPM_EstablishTransport(TPM_REQUEST *req, TPM_RESPONSE 
       || tpm_unmarshal_BLOB(&ptr, &len, &secret, secretSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_EstablishTransport(encHandle, &transPublic, secretSize, secret, 
+  res = TPM_EstablishTransport(encHandle, &transPublic, secretSize, secret,
     &req->auth1, &transHandle, &locality, &currentTicks, &transNonce);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2735,7 +2735,7 @@ static TPM_RESULT execute_TPM_ExecuteTransport(TPM_REQUEST *req, TPM_RESPONSE *r
       || tpm_unmarshal_BLOB(&ptr, &len, &inWrappedCmd, inWrappedCmdSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_ExecuteTransport(inWrappedCmdSize, inWrappedCmd, &req->auth1, 
+  res = TPM_ExecuteTransport(inWrappedCmdSize, inWrappedCmd, &req->auth1,
     &currentTicks, &locality, &outWrappedCmdSize, &outWrappedCmd);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2773,7 +2773,7 @@ static TPM_RESULT execute_TPM_ReleaseTransportSigned(TPM_REQUEST *req, TPM_RESPO
       || tpm_unmarshal_TPM_NONCE(&ptr, &len, &antiReplay)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_ReleaseTransportSigned(key, &antiReplay, &req->auth1, &req->auth2, 
+  res = TPM_ReleaseTransportSigned(key, &antiReplay, &req->auth1, &req->auth2,
     &locality, &currentTicks, &signSize, &signature);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2944,7 +2944,7 @@ static TPM_RESULT execute_TPM_DAA_Join(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_BLOB(&ptr, &len, &inputData1, inputSize1)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_DAA_Join(handle, stage, inputSize0, inputData0, inputSize1, 
+  res = TPM_DAA_Join(handle, stage, inputSize0, inputData0, inputSize1,
     inputData1, &req->auth1, &ordinal, &outputSize, &outputData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -2987,7 +2987,7 @@ static TPM_RESULT execute_TPM_DAA_Sign(TPM_REQUEST *req, TPM_RESPONSE *rsp)
       || tpm_unmarshal_BLOB(&ptr, &len, &inputData1, inputSize1)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_DAA_Sign(handle, stage, inputSize0, inputData0, inputSize1, 
+  res = TPM_DAA_Sign(handle, stage, inputSize0, inputData0, inputSize1,
     inputData1, &req->auth1, &ordinal, &outputSize, &outputData);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -3212,7 +3212,7 @@ static TPM_RESULT execute_TPM_ChangeAuthAsymStart(TPM_REQUEST *req, TPM_RESPONSE
       || tpm_unmarshal_TPM_KEY_PARMS(&ptr, &len, &inTempKey)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_ChangeAuthAsymStart(idHandle, &antiReplay, &inTempKey, &req->auth1, 
+  res = TPM_ChangeAuthAsymStart(idHandle, &antiReplay, &inTempKey, &req->auth1,
     &certifyInfo, &sigSize, &sig, &ephHandle, &outTempKey);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -3264,8 +3264,8 @@ static TPM_RESULT execute_TPM_ChangeAuthAsymFinish(TPM_REQUEST *req, TPM_RESPONS
       || tpm_unmarshal_BLOB(&ptr, &len, &encData, encDataSize)
       || len != 0) return TPM_BAD_PARAMETER;
   /* execute command */
-  res = TPM_ChangeAuthAsymFinish(parentHandle, ephHandle, entityType, 
-    &newAuthLink, newAuthSize, encNewAuth, encDataSize, encData, &req->auth1, 
+  res = TPM_ChangeAuthAsymFinish(parentHandle, ephHandle, entityType,
+    &newAuthLink, newAuthSize, encNewAuth, encDataSize, encData, &req->auth1,
     &outDataSize, &outData, &saltNonce, &changeProof);
   if (res != TPM_SUCCESS) return res;
   /* marshal output */
@@ -3312,7 +3312,7 @@ static TPM_RESULT execute_TPM_OwnerReadPubek(TPM_REQUEST *req, TPM_RESPONSE *rsp
   return res;
 }
 
-static void tpm_setup_rsp_auth(TPM_COMMAND_CODE ordinal, TPM_RESPONSE *rsp) 
+static void tpm_setup_rsp_auth(TPM_COMMAND_CODE ordinal, TPM_RESPONSE *rsp)
 {
   tpm_hmac_ctx_t hmac;
 
@@ -3324,18 +3324,18 @@ static void tpm_setup_rsp_auth(TPM_COMMAND_CODE ordinal, TPM_RESPONSE *rsp)
     case TPM_TAG_RSP_AUTH2_COMMAND:
       tpm_hmac_init(&hmac, rsp->auth2->secret, sizeof(rsp->auth2->secret));
       tpm_hmac_update(&hmac, rsp->auth2->digest, sizeof(rsp->auth2->digest));
-      tpm_hmac_update(&hmac, rsp->auth2->nonceEven.nonce, 
+      tpm_hmac_update(&hmac, rsp->auth2->nonceEven.nonce,
                   sizeof(rsp->auth2->nonceEven.nonce));
-      tpm_hmac_update(&hmac, rsp->auth2->nonceOdd.nonce, 
+      tpm_hmac_update(&hmac, rsp->auth2->nonceOdd.nonce,
                   sizeof(rsp->auth2->nonceOdd.nonce));
       tpm_hmac_update(&hmac, (BYTE*)&rsp->auth2->continueAuthSession, 1);
       tpm_hmac_final(&hmac, rsp->auth2->auth);
     case TPM_TAG_RSP_AUTH1_COMMAND:
       tpm_hmac_init(&hmac, rsp->auth1->secret, sizeof(rsp->auth1->secret));
       tpm_hmac_update(&hmac, rsp->auth1->digest, sizeof(rsp->auth1->digest));
-      tpm_hmac_update(&hmac, rsp->auth1->nonceEven.nonce, 
+      tpm_hmac_update(&hmac, rsp->auth1->nonceEven.nonce,
         sizeof(rsp->auth1->nonceEven.nonce));
-      tpm_hmac_update(&hmac, rsp->auth1->nonceOdd.nonce, 
+      tpm_hmac_update(&hmac, rsp->auth1->nonceOdd.nonce,
         sizeof(rsp->auth1->nonceOdd.nonce));
       tpm_hmac_update(&hmac, (BYTE*)&rsp->auth1->continueAuthSession, 1);
       tpm_hmac_final(&hmac, rsp->auth1->auth);
@@ -3355,9 +3355,17 @@ static void tpm_setup_error_response(TPM_RESULT res, TPM_RESPONSE *rsp)
 static TPM_RESULT tpm_check_status_and_mode(TPM_REQUEST *req)
 {
   /* verify that self-test succeeded */
-  if (!tpmData.permanent.flags.selfTestSucceeded) return TPM_FAILEDSELFTEST;
+  if (!tpmData.permanent.flags.selfTestSucceeded
+      && req->ordinal != TPM_ORD_Init
+      && req->ordinal != TPM_ORD_Startup
+      && req->ordinal != TPM_ORD_SelfTestFull
+      ) return TPM_FAILEDSELFTEST;
   /* initialisation must be finished before we execute any command */
-  if (tpmData.stany.flags.postInitialise) return TPM_INVALID_POSTINIT;
+  if (tpmData.stany.flags.postInitialise
+      && req->ordinal != TPM_ORD_Init
+      && req->ordinal != TPM_ORD_Startup
+      && req->ordinal != TPM_ORD_SelfTestFull
+      ) return TPM_INVALID_POSTINIT;
   /* if the TPM is deactivated only a subset of all commands can be performed */
   if ((tpmData.permanent.flags.deactivated || tpmData.stclear.flags.deactivated)
       && req->ordinal != TPM_ORD_Reset
@@ -3421,13 +3429,13 @@ static TPM_RESULT tpm_check_status_and_mode(TPM_REQUEST *req)
       && req->ordinal != TSC_ORD_PhysicalPresence
       && req->ordinal != TSC_ORD_ResetEstablishmentBit
       ) return TPM_DISABLED;
-  return TPM_SUCCESS; 
+  return TPM_SUCCESS;
 }
 
 void tpm_execute_command(TPM_REQUEST *req, TPM_RESPONSE *rsp)
 {
   TPM_RESULT res;
-  
+
   /* setup authorisation as well as response tag and size */
   memset(rsp, 0, sizeof(*rsp));
   switch (req->tag) {
@@ -3461,7 +3469,7 @@ void tpm_execute_command(TPM_REQUEST *req, TPM_RESPONSE *rsp)
   /* check whether the command is allowed in the current mode of the TPM */
   res = tpm_check_status_and_mode(req);
   if (res != TPM_SUCCESS) {
-    info("tpm_check_status_and_mode(0x%02x) failed: (0x%02x) %s", 
+    info("tpm_check_status_and_mode(0x%02x) failed: (0x%02x) %s",
          req->ordinal, res, tpm_error_to_string(res));
     tpm_setup_error_response(res, rsp);
     return;
@@ -4091,9 +4099,9 @@ void tpm_execute_command(TPM_REQUEST *req, TPM_RESPONSE *rsp)
     }
   }
   /* terminate authorization sessions if necessary */
-  if (rsp->auth1 != NULL && !rsp->auth1->continueAuthSession) 
+  if (rsp->auth1 != NULL && !rsp->auth1->continueAuthSession)
     TPM_FlushSpecific(rsp->auth1->authHandle, HANDLE_TO_RT(rsp->auth1->authHandle));
-  if (rsp->auth2 != NULL && !rsp->auth2->continueAuthSession) 
+  if (rsp->auth2 != NULL && !rsp->auth2->continueAuthSession)
     TPM_FlushSpecific(rsp->auth2->authHandle, TPM_RT_AUTH);
   /* if transportExclusive is set, only the execution of TPM_ExecuteTransport
      and TPM_ReleaseTransportSigned is allowed */
@@ -4147,10 +4155,10 @@ int tpm_handle_command(const uint8_t *in, uint32_t in_size, uint8_t **out, uint3
     error("tpm_unmarshal_TPM_REQUEST() failed");
     return -1;
   }
-  
+
   /* update timing ticks */
   tpm_update_ticks();
-  
+
   /* audit request */
   tpm_audit_request(req.ordinal, &req);
 
@@ -4189,4 +4197,3 @@ int tpm_handle_command(const uint8_t *in, uint32_t in_size, uint8_t **out, uint3
   tpm_free(rsp.param);
   return 0;
 }
-
