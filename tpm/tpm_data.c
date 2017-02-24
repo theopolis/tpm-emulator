@@ -55,7 +55,7 @@ static void init_nv_storage(void)
     nv->pubInfo.pcrInfoRead.localityAtRelease = 0x1f;
     nv->pubInfo.pcrInfoWrite.localityAtRelease = 0x1f;
     nv->pubInfo.permission.tag = TPM_TAG_NV_ATTRIBUTES;
-    nv->pubInfo.permission.attributes = TPM_NV_PER_OWNERWRITE 
+    nv->pubInfo.permission.attributes = TPM_NV_PER_OWNERWRITE
                                         | TPM_NV_PER_WRITEALL;
     nv->pubInfo.dataSize = 20;
     nv->dataIndex = 0;
@@ -123,16 +123,16 @@ void tpm_init_data(void)
   tpmData.permanent.data.tag = TPM_TAG_PERMANENT_DATA;
   /* set permanent flags */
   tpmData.permanent.flags.tag = TPM_TAG_PERMANENT_FLAGS;
-  tpmData.permanent.flags.disable = FALSE;
-  tpmData.permanent.flags.deactivated = FALSE;
+  tpmData.permanent.flags.disable = TRUE;
+  tpmData.permanent.flags.deactivated = TRUE;
   tpmData.permanent.flags.ownership = TRUE;
   tpmData.permanent.flags.readPubek = TRUE;
-  tpmData.permanent.flags.allowMaintenance = TRUE;
-  tpmData.permanent.flags.enableRevokeEK = TRUE;
-  tpmData.permanent.flags.readSRKPub = TRUE;
-  tpmData.permanent.flags.nvLocked = TRUE;
+  tpmData.permanent.flags.allowMaintenance = FALSE;
+  tpmData.permanent.flags.enableRevokeEK = FALSE;
+  tpmData.permanent.flags.readSRKPub = FALSE;
+  tpmData.permanent.flags.nvLocked = FALSE;
   /* set TPM vision */
-  memcpy(&tpmData.permanent.data.version, 
+  memcpy(&tpmData.permanent.data.version,
          &tpm_version, sizeof(TPM_VERSION));
   /* seed PRNG */
   tpm_get_extern_random_bytes(&tpmData.permanent.data.rngState,
@@ -159,16 +159,16 @@ void tpm_init_data(void)
     tpm_rsa_generate_key(&tpmData.permanent.data.endorsementKey, 2048);
   } else {
     /* setup endorsement key */
-    tpm_rsa_import_key(&tpmData.permanent.data.endorsementKey, 
+    tpm_rsa_import_key(&tpmData.permanent.data.endorsementKey,
       RSA_MSB_FIRST, ek_n, 256, ek_e, 3, ek_p, ek_q);
   }
   if (tpmConf & TPM_CONF_GENERATE_SEED_DAA) {
     /* generate the DAA seed */
-    tpm_get_random_bytes(tpmData.permanent.data.tpmDAASeed.nonce, 
+    tpm_get_random_bytes(tpmData.permanent.data.tpmDAASeed.nonce,
       sizeof(tpmData.permanent.data.tpmDAASeed.nonce));
   } else {
     /* setup DAA seed */
-    memcpy(tpmData.permanent.data.tpmDAASeed.nonce, 
+    memcpy(tpmData.permanent.data.tpmDAASeed.nonce,
       "\x77\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
       "\x00\x00\x00\x77", sizeof(TPM_NONCE));
   }
@@ -219,7 +219,7 @@ int tpm_store_permanent_data(void)
   if (len != 0) debug("warning: buffer was too large, %d bytes left", len);
   if (tpm_write_to_storage(buf, buf_length - len)) {
     tpm_free(buf);
-    return -1; 
+    return -1;
   }
   tpm_free(buf);
   return 0;
@@ -258,4 +258,3 @@ int tpm_erase_permanent_data(void)
   int res = tpm_write_to_storage(d, 0);
   return res;
 }
-

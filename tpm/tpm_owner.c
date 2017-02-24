@@ -289,18 +289,30 @@ TPM_RESULT TSC_PhysicalPresence(TPM_PHYSICAL_PRESENCE physicalPresence)
   info("TSC_PhysicalPresence()");
   if (!tpmData.permanent.flags.physicalPresenceLifetimeLock) {
     /* enable physicalPresenceHW or physicalPresenceCMD */
-    if (physicalPresence & TPM_PHYSICAL_PRESENCE_HW_ENABLE)
+    if (physicalPresence & TPM_PHYSICAL_PRESENCE_HW_ENABLE) {
+      if (physicalPresence & TPM_PHYSICAL_PRESENCE_HW_DISABLE) {
+        return TPM_BAD_PARAMETER;
+      }
       tpmData.permanent.flags.physicalPresenceHWEnable = TRUE;
-    if (physicalPresence & TPM_PHYSICAL_PRESENCE_CMD_ENABLE)
+    }
+
+    if (physicalPresence & TPM_PHYSICAL_PRESENCE_CMD_ENABLE) {
+      if (physicalPresence & TPM_PHYSICAL_PRESENCE_CMD_DISABLE) {
+        return TPM_BAD_PARAMETER;
+      }
       tpmData.permanent.flags.physicalPresenceCMDEnable = TRUE;
-  } else if (physicalPresence & TPM_PHYSICAL_PRESENCE_LIFETIME_LOCK) {
-    /* set physicalPresenceLifetimeLock */
-    tpmData.permanent.flags.physicalPresenceLifetimeLock = TRUE;
+    }
+
+    if (physicalPresence & TPM_PHYSICAL_PRESENCE_LIFETIME_LOCK) {
+      /* set physicalPresenceLifetimeLock */
+      tpmData.permanent.flags.physicalPresenceLifetimeLock = TRUE;
+    }
   } else if (tpmData.permanent.flags.physicalPresenceCMDEnable &&
              !tpmData.stclear.flags.physicalPresenceLock) {
     /* set physicalPresence or physicalPresenceLock */
-    if (physicalPresence & TPM_PHYSICAL_PRESENCE_PRESENT)
+    if (physicalPresence & TPM_PHYSICAL_PRESENCE_PRESENT) {
       tpmData.stclear.flags.physicalPresence = TRUE;
+    }
     if (physicalPresence & TPM_PHYSICAL_PRESENCE_NOTPRESENT)
       tpmData.stclear.flags.physicalPresence = FALSE;
     if (physicalPresence & TPM_PHYSICAL_PRESENCE_LOCK)
