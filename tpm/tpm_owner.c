@@ -64,6 +64,7 @@ TPM_RESULT TPM_PhysicalSetDeactivated(BOOL state)
 {
   info("TPM_PhysicalSetDeactivated()");
   if (!tpm_get_physical_presence()) return TPM_BAD_PRESENCE;
+  info("permanent.flags.deactivated = %d", state);
   tpmData.permanent.flags.deactivated = state;
   return TPM_SUCCESS;
 }
@@ -293,6 +294,7 @@ TPM_RESULT TSC_PhysicalPresence(TPM_PHYSICAL_PRESENCE physicalPresence)
       if (physicalPresence & TPM_PHYSICAL_PRESENCE_HW_DISABLE) {
         return TPM_BAD_PARAMETER;
       }
+      info("[physicalPresenceHWEnable]");
       tpmData.permanent.flags.physicalPresenceHWEnable = TRUE;
     }
 
@@ -300,23 +302,30 @@ TPM_RESULT TSC_PhysicalPresence(TPM_PHYSICAL_PRESENCE physicalPresence)
       if (physicalPresence & TPM_PHYSICAL_PRESENCE_CMD_DISABLE) {
         return TPM_BAD_PARAMETER;
       }
+      info("[physicalPresenceCMDEnable]");
       tpmData.permanent.flags.physicalPresenceCMDEnable = TRUE;
     }
 
     if (physicalPresence & TPM_PHYSICAL_PRESENCE_LIFETIME_LOCK) {
       /* set physicalPresenceLifetimeLock */
+      info("[physicalPresenceLifetimeLock]");
       tpmData.permanent.flags.physicalPresenceLifetimeLock = TRUE;
     }
   } else if (tpmData.permanent.flags.physicalPresenceCMDEnable &&
              !tpmData.stclear.flags.physicalPresenceLock) {
     /* set physicalPresence or physicalPresenceLock */
     if (physicalPresence & TPM_PHYSICAL_PRESENCE_PRESENT) {
+      info("[physicalPresence=true]");
       tpmData.stclear.flags.physicalPresence = TRUE;
     }
-    if (physicalPresence & TPM_PHYSICAL_PRESENCE_NOTPRESENT)
+    if (physicalPresence & TPM_PHYSICAL_PRESENCE_NOTPRESENT) {
+      info("[physicalPresence=false]");
       tpmData.stclear.flags.physicalPresence = FALSE;
-    if (physicalPresence & TPM_PHYSICAL_PRESENCE_LOCK)
+    }
+    if (physicalPresence & TPM_PHYSICAL_PRESENCE_LOCK) {
+      info("[physicalPresenceLock]");
       tpmData.stclear.flags.physicalPresenceLock = TRUE;
+    }
   } else {
     return TPM_BAD_PARAMETER;
   }

@@ -23,9 +23,9 @@
 
 /*
  * The GetCapability Commands ([TPM_Part3], Section 7)
- * The GetCapability command allows the TPM to report back to the requester 
- * what type of TPM it is dealing with. The request for information requires 
- * the requester to specify which piece of information that is required. 
+ * The GetCapability command allows the TPM to report back to the requester
+ * what type of TPM it is dealing with. The request for information requires
+ * the requester to specify which piece of information that is required.
  */
 
 static inline TPM_RESULT return_UINT32(UINT32 *respSize, BYTE **resp, UINT32 value)
@@ -39,13 +39,13 @@ static inline TPM_RESULT return_UINT32(UINT32 *respSize, BYTE **resp, UINT32 val
   return TPM_SUCCESS;
 }
 
-static inline TPM_RESULT return_UINT32_array(UINT32 *respSize, BYTE **resp, 
+static inline TPM_RESULT return_UINT32_array(UINT32 *respSize, BYTE **resp,
 		                             UINT32 *array, UINT32 array_len)
 {
   UINT32 len = *respSize = 4 * array_len;
   BYTE *ptr = *resp = tpm_malloc(*respSize);
   if (ptr == NULL || tpm_marshal_UINT32_ARRAY(&ptr, &len, array, array_len)) {
-    tpm_free(*resp);	 
+    tpm_free(*resp);
     return TPM_FAIL;
   }
   return TPM_SUCCESS;
@@ -62,7 +62,7 @@ static inline TPM_RESULT return_BOOL(UINT32 *respSize, BYTE **resp, BOOL value)
   return TPM_SUCCESS;
 }
 
-static TPM_RESULT cap_property(UINT32 subCapSize, BYTE *subCap, 
+static TPM_RESULT cap_property(UINT32 subCapSize, BYTE *subCap,
                                UINT32 *respSize, BYTE **resp)
 {
   UINT32 i, j, property;
@@ -86,7 +86,7 @@ static TPM_RESULT cap_property(UINT32 subCapSize, BYTE *subCap,
       debug("[TPM_CAP_PROP_KEYS]");
       for (i = 0, j = TPM_MAX_KEYS; i < TPM_MAX_KEYS; i++)
         if (tpmData.permanent.data.keys[i].payload) j--;
-      return return_UINT32(respSize, resp, j); 
+      return return_UINT32(respSize, resp, j);
 
     case TPM_CAP_PROP_MIN_COUNTER:
       debug("[TPM_CAP_PROP_MIN_COUNTER]");
@@ -173,10 +173,10 @@ static TPM_RESULT cap_property(UINT32 subCapSize, BYTE *subCap,
 
     case TPM_CAP_PROP_DAA_INTERRUPT:
       debug("[TPM_CAP_PROP_DAA_INTERRUPT]");
-      /* A value of TRUE indicates that the TPM will accept ANY command 
-       * while executing a DAA Join or Sign. A value of FALSE indicates 
-       * that the TPM will invalidate the DAA Join or Sign upon the 
-       * receipt of any command other than the next join/sign in the 
+      /* A value of TRUE indicates that the TPM will accept ANY command
+       * while executing a DAA Join or Sign. A value of FALSE indicates
+       * that the TPM will invalidate the DAA Join or Sign upon the
+       * receipt of any command other than the next join/sign in the
        * session or a TPM_SaveContext. */
       return return_BOOL(respSize, resp, TRUE);
 
@@ -239,15 +239,15 @@ static TPM_RESULT cap_mfr(UINT32 subCapSize, BYTE *subCap,
 {
   UINT32 len, type;
   BYTE *ptr;
-  
+
   if (tpm_unmarshal_UINT32(&subCap, &subCapSize, &type))
     return TPM_BAD_MODE;
-  
+
   switch (type) {
     default:
       *respSize = 4;
       ptr = *resp = tpm_malloc(*respSize);
-      if (ptr == NULL || tpm_marshal_TPM_VERSION(&ptr, &len, 
+      if (ptr == NULL || tpm_marshal_TPM_VERSION(&ptr, &len,
                            &tpmData.permanent.data.version)) {
           tpm_free(*resp);
           return TPM_FAIL;
@@ -260,7 +260,7 @@ static TPM_RESULT cap_nv_list(UINT32 *respSize, BYTE **resp)
 {
   UINT32 i, len;
   BYTE *ptr = *resp = tpm_malloc(TPM_MAX_NVS * sizeof(TPM_NV_INDEX));
-  
+
   if (ptr == NULL) return TPM_FAIL;
   *respSize = 0;
   for (i = 0; i < TPM_MAX_NVS; i++) {
@@ -268,7 +268,7 @@ static TPM_RESULT cap_nv_list(UINT32 *respSize, BYTE **resp)
       len = sizeof(TPM_NV_INDEX);
       ptr = (*resp) + *respSize;
       *respSize += len;
-      if (tpm_marshal_UINT32(&ptr, &len, 
+      if (tpm_marshal_UINT32(&ptr, &len,
           tpmData.permanent.data.nvStorage[i].pubInfo.nvIndex)) {
         tpm_free(*resp);
         return TPM_FAIL;
@@ -292,7 +292,7 @@ static TPM_RESULT cap_nv_index(UINT32 subCapSize, BYTE *subCap,
   if (nv == NULL) return TPM_BADINDEX;
   len = *respSize = sizeof_TPM_NV_DATA_PUBLIC(nv->pubInfo);
   ptr = *resp = tpm_malloc(len);
-  if (ptr == NULL 
+  if (ptr == NULL
       || tpm_marshal_TPM_NV_DATA_PUBLIC(&ptr, &len, &nv->pubInfo)) {
     tpm_free(*resp);
     return TPM_FAIL;
@@ -305,7 +305,7 @@ static TPM_RESULT cap_handle(UINT32 subCapSize, BYTE *subCap,
                              UINT32 *respSize, BYTE **resp)
 {
   UINT32 i, len, type;
-  BYTE *ptr; 
+  BYTE *ptr;
   /* maximum of { TPM_MAX_KEYS, TPM_MAX_SESSIONS } */
   UINT32 list_size =
     (TPM_MAX_KEYS > TPM_MAX_SESSIONS) ? TPM_MAX_KEYS : TPM_MAX_SESSIONS;
@@ -548,7 +548,7 @@ static TPM_RESULT cap_flag(UINT32 subCapSize, BYTE *subCap,
       debug("[TPM_CAP_FLAG_PERMANENT");
       *respSize = len = sizeof_TPM_PERMANENT_FLAGS(tpmData.permanent.flags);
       *resp = ptr = tpm_malloc(len);
-      if (ptr == NULL 
+      if (ptr == NULL
           || tpm_marshal_TPM_PERMANENT_FLAGS(&ptr, &len, &tpmData.permanent.flags)) {
         tpm_free(*resp);
         return TPM_FAIL;
@@ -577,12 +577,12 @@ static TPM_RESULT cap_loaded(UINT32 subCapSize, BYTE *subCap,
   TPM_KEY_PARMS parms;
   if (tpm_unmarshal_TPM_KEY_PARMS(&subCap, &subCapSize, &parms))
     return TPM_BAD_MODE;
-  for (i = 0; i < TPM_MAX_KEYS; i++) 
+  for (i = 0; i < TPM_MAX_KEYS; i++)
     if (!tpmData.permanent.data.keys[i].payload) free_space = TRUE;
   if (free_space
       && parms.algorithmID == TPM_ALG_RSA
       && parms.parms.rsa.keyLength <= 2048
-      && parms.parms.rsa.numPrimes == 2) 
+      && parms.parms.rsa.numPrimes == 2)
     return return_BOOL(respSize, resp, TRUE);
   return return_BOOL(respSize, resp, FALSE);
 }
@@ -671,7 +671,7 @@ static TPM_RESULT cap_version_val(UINT32 *respSize, BYTE **resp)
   UINT32 len;
   BYTE *ptr;
   TPM_CAP_VERSION_INFO version;
-  
+
   version.tag = TPM_TAG_CAP_VERSION_INFO;
   version.version = tpmData.permanent.data.version;
   version.specLevel = 0x0002; /* see [TPM_Part2], Section 21.6 */
@@ -681,7 +681,7 @@ static TPM_RESULT cap_version_val(UINT32 *respSize, BYTE **resp)
     return TPM_FAIL;
   version.vendorSpecificSize = 0;
   version.vendorSpecific = NULL;
-  
+
   len = *respSize = sizeof_TPM_CAP_VERSION_INFO(version);
   ptr = *resp = tpm_malloc(*respSize);
   if (ptr == NULL || tpm_marshal_TPM_CAP_VERSION_INFO(&ptr, &len, &version)) {
@@ -691,7 +691,7 @@ static TPM_RESULT cap_version_val(UINT32 *respSize, BYTE **resp)
   return TPM_SUCCESS;
 }
 
-TPM_RESULT TPM_GetCapability(TPM_CAPABILITY_AREA capArea, UINT32 subCapSize, 
+TPM_RESULT TPM_GetCapability(TPM_CAPABILITY_AREA capArea, UINT32 subCapSize,
                              BYTE *subCap, UINT32 *respSize, BYTE **resp)
 {
   info("TPM_GetCapability()");
@@ -803,6 +803,7 @@ static TPM_RESULT set_perm_flags(UINT32 subCap, BOOL flag, BOOL ownerAuth,
     case 3:
       if (!tpm_get_physical_presence()) return TPM_AUTHFAIL;
       if (disabled) return TPM_DISABLED;
+      info("permanent.flags.deactivated = %d", flag);
       tpmData.permanent.flags.deactivated = flag;
       return TPM_SUCCESS;
 
@@ -1009,7 +1010,7 @@ static TPM_RESULT set_vendor(UINT32 subCap, BYTE *setValue,
   return TPM_BAD_PARAMETER;
 }
 
-TPM_RESULT TPM_SetCapability(TPM_CAPABILITY_AREA capArea, UINT32 subCapSize, 
+TPM_RESULT TPM_SetCapability(TPM_CAPABILITY_AREA capArea, UINT32 subCapSize,
                              BYTE *subCap, UINT32 setValueSize, BYTE *setValue,
                              TPM_AUTH *auth1)
 {
@@ -1068,11 +1069,11 @@ TPM_RESULT TPM_SetCapability(TPM_CAPABILITY_AREA capArea, UINT32 subCapSize,
 }
 
 TPM_RESULT TPM_GetCapabilityOwner(TPM_AUTH *auth1, TPM_VERSION *version,
-                                  UINT32 *non_volatile_flags, 
+                                  UINT32 *non_volatile_flags,
                                   UINT32 *volatile_flags)
 {
   TPM_RESULT res;
-  
+
   info("TPM_GetCapabilityOwner()");
   /* verify owner authorization */
   res = tpm_verify_auth(auth1, tpmData.permanent.data.ownerAuth, TPM_KH_OWNER);
@@ -1080,7 +1081,7 @@ TPM_RESULT TPM_GetCapabilityOwner(TPM_AUTH *auth1, TPM_VERSION *version,
   /* initialize */
   *version = tpmData.permanent.data.version;
   *non_volatile_flags = *volatile_flags = 0;
-  
+
   /* set non-volatile flags */
   if (tpmData.permanent.flags.disable)
     *non_volatile_flags |= (1 <<  0);
@@ -1122,7 +1123,7 @@ TPM_RESULT TPM_GetCapabilityOwner(TPM_AUTH *auth1, TPM_VERSION *version,
     *non_volatile_flags |= (1 << 18);
   if (tpmData.permanent.flags.disableFullDALogicInfo)
     *non_volatile_flags |= (1 << 19);
-  
+
   /* set volatile flags */
   if (tpmData.stclear.flags.deactivated)
     *volatile_flags |= (1 <<  0);
@@ -1134,6 +1135,6 @@ TPM_RESULT TPM_GetCapabilityOwner(TPM_AUTH *auth1, TPM_VERSION *version,
     *volatile_flags |= (1 <<  3);
   if (tpmData.stclear.flags.bGlobalLock)
     *volatile_flags |= (1 <<  4);
-  
+
   return TPM_SUCCESS;
 }

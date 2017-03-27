@@ -124,6 +124,7 @@ void tpm_init_data(void)
   /* set permanent flags */
   tpmData.permanent.flags.tag = TPM_TAG_PERMANENT_FLAGS;
   tpmData.permanent.flags.disable = TRUE;
+  info("permanent.flags.deactivated = 1");
   tpmData.permanent.flags.deactivated = TRUE;
   tpmData.permanent.flags.ownership = TRUE;
   tpmData.permanent.flags.readPubek = TRUE;

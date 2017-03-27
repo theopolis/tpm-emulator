@@ -62,6 +62,7 @@ TPM_RESULT TPM_Startup(TPM_STARTUP_TYPE startupType)
     /* reset STCLEAR_FLAGS */
     SET_TO_ZERO(&tpmData.stclear.flags);
     tpmData.stclear.flags.tag = TPM_TAG_STCLEAR_FLAGS;
+    info("stclear.flags.deactivated = %d", tpmData.permanent.flags.deactivated);
     tpmData.stclear.flags.deactivated = tpmData.permanent.flags.deactivated;
     /* reset STCLEAR_DATA */
     SET_TO_ZERO(&tpmData.stclear.data);
@@ -104,7 +105,7 @@ TPM_RESULT TPM_Startup(TPM_STARTUP_TYPE startupType)
 TPM_RESULT TPM_SaveState()
 {
   info("TPM_SaveState()");
-  if (tpmData.permanent.flags.selfTestSucceeded && !tpmData.stclear.flags.deactivated) {
+  if (tpmData.permanent.flags.selfTestSucceeded && !tpmData.permanent.flags.deactivated) {
     return (tpm_store_permanent_data()) ? TPM_FAIL : TPM_SUCCESS;
   } else {
     debug("TPM is deactivated or in fail-stop mode, thus the permanent data is not stored");

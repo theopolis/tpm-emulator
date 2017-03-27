@@ -73,7 +73,7 @@ add_subdirectory(crypto)
 add_subdirectory(tddl)
 
 # add kernel modules
-add_subdirectory(tpmd_dev)
+# add_subdirectory(tpmd_dev)
 
 # add executables
 add_subdirectory(tpmd)
