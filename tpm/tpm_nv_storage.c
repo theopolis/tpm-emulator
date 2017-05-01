@@ -149,7 +149,7 @@ TPM_RESULT TPM_NV_DefineSpace(TPM_NV_DATA_PUBLIC *pubInfo,
   if ((pubInfo->permission.attributes & TPM_NV_PER_OWNERREAD)
       && (pubInfo->permission.attributes & TPM_NV_PER_AUTHREAD))
     return TPM_AUTH_CONFLICT;
-  if (!(pubInfo->permission.attributes & (TPM_NV_PER_OWNERWRITE 
+  if (!(pubInfo->permission.attributes & (TPM_NV_PER_OWNERWRITE
         | TPM_NV_PER_AUTHWRITE | TPM_NV_PER_WRITEDEFINE | TPM_NV_PER_PPWRITE))
       && pubInfo->pcrInfoWrite.localityAtRelease == 0x1f) return TPM_PER_NOWRITE;
   if (pubInfo->dataSize == 0) return TPM_BAD_PARAM_SIZE;
@@ -169,7 +169,7 @@ TPM_RESULT TPM_NV_DefineSpace(TPM_NV_DATA_PUBLIC *pubInfo,
   nv->dataIndex = tpmData.permanent.data.nvDataSize;
   tpmData.permanent.data.nvDataSize += pubInfo->dataSize;
   nv->valid = TRUE;
-  memset(tpmData.permanent.data.nvData + nv->dataIndex, 
+  memset(tpmData.permanent.data.nvData + nv->dataIndex,
          0xff, pubInfo->dataSize);
   return TPM_SUCCESS;
 }
@@ -242,6 +242,7 @@ TPM_RESULT TPM_NV_WriteValue(TPM_NV_INDEX nvIndex, UINT32 offset,
       /* no authorization available */
       if (nv->pubInfo.permission.attributes & TPM_NV_PER_OWNERWRITE)
         return TPM_AUTH_CONFLICT;
+      debug("incrementing noOwnerNVWrite: %d", tpmData.permanent.data.noOwnerNVWrite);
       if (++tpmData.permanent.data.noOwnerNVWrite > TPM_MAX_NV_WRITE_NOOWNER)
         return TPM_MAXNVWRITES;
     } else {
@@ -279,7 +280,7 @@ TPM_RESULT TPM_NV_WriteValueAuth(TPM_NV_INDEX nvIndex, UINT32 offset,
 }
 
 TPM_RESULT nv_read(TPM_NV_DATA_SENSITIVE *nv,  UINT32 offset,
-                   UINT32 inDataSize, UINT32 *outDataSize, 
+                   UINT32 inDataSize, UINT32 *outDataSize,
                    BYTE **data, BOOL verify)
 {
   TPM_RESULT res;
@@ -306,7 +307,7 @@ TPM_RESULT nv_read(TPM_NV_DATA_SENSITIVE *nv,  UINT32 offset,
   if (inDataSize == 0) {
     nv->pubInfo.bReadSTClear = TRUE;
     *outDataSize = 0;
-    *data = NULL; 
+    *data = NULL;
   } else {
     if (offset + inDataSize > nv->pubInfo.dataSize) return TPM_NOSPACE;
     *outDataSize = inDataSize;
@@ -320,7 +321,7 @@ TPM_RESULT nv_read(TPM_NV_DATA_SENSITIVE *nv,  UINT32 offset,
 }
 
 TPM_RESULT TPM_NV_ReadValue(TPM_NV_INDEX nvIndex,  UINT32 offset,
-                            UINT32 inDataSize, TPM_AUTH *auth1,  
+                            UINT32 inDataSize, TPM_AUTH *auth1,
                             UINT32 *outDataSize, BYTE **data)
 {
   TPM_RESULT res;
@@ -353,7 +354,7 @@ TPM_RESULT TPM_NV_ReadValue(TPM_NV_INDEX nvIndex,  UINT32 offset,
 }
 
 TPM_RESULT TPM_NV_ReadValueAuth(TPM_NV_INDEX nvIndex,  UINT32 offset,
-                                UINT32 inDataSize, TPM_AUTH *auth1,  
+                                UINT32 inDataSize, TPM_AUTH *auth1,
                                 UINT32 *outDataSize, BYTE **data)
 {
   TPM_RESULT res;
@@ -373,4 +374,3 @@ TPM_RESULT TPM_NV_ReadValueAuth(TPM_NV_INDEX nvIndex,  UINT32 offset,
   /* read data */
   return nv_read(nv, offset, inDataSize, outDataSize, data, TRUE);
 }
-
