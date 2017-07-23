@@ -412,11 +412,13 @@ static void main_loop(void)
         debug("waiting for connections...");
 	npoll = 0;
 	if (sock != -1) {
+        debug("socket");
 	    poll_table[npoll].fd = sock;
 	    poll_table[npoll].events = POLLIN;
 	    poll_table[npoll++].revents = 0;
 	}
 	if (devfd != -1) {
+        debug("fd");
 	    poll_table[npoll].fd = devfd;
 	    poll_table[npoll].events = POLLIN | POLLERR;
 	    poll_table[npoll++].revents = 0;
@@ -430,10 +432,12 @@ static void main_loop(void)
 	if (devfd != -1 && poll_table[npoll - 1].revents) {
 	    /* if POLLERR was set, let read() handle it */
 	    if (handle_emuldev_command(devfd) < 0)
-		break;
+    		break;
 	}
-	if (sock == -1 || !poll_table[0].revents)
+	if (sock == -1 || !poll_table[0].revents) {
+        debug("fd without revents");
 	    continue;
+    }
 
 	/* Beyond this point, npoll will always be 1 if the emulator device is
 	 * not open and 2 if it is, so we can just fill in the second slot of
@@ -450,19 +454,26 @@ static void main_loop(void)
         in_len = 0;
         do {
             debug("waiting for commands...");
-	    poll_table[0].fd = fh;
-	    poll_table[0].events = POLLIN;
-	    poll_table[0].revents = 0;
-	    poll_table[1].fd = devfd;
-	    poll_table[1].events = POLLIN | POLLERR;
-	    poll_table[1].revents = 0;
+        if (sock != -1) {
+    	    poll_table[0].fd = fh;
+    	    poll_table[0].events = POLLIN;
+    	    poll_table[0].revents = 0;
+        }
+        if (devfd != -1) {
+    	    poll_table[1].fd = devfd;
+    	    poll_table[1].events = POLLIN | POLLERR;
+    	    poll_table[1].revents = 0;
+        }
 
+        debug("will poll");
 	    res = poll(poll_table, npoll, TPM_COMMAND_TIMEOUT);
+        debug("done");
             if (res < 0) {
                 error("poll(fh) failed: %s", strerror(errno));
                 close(fh);
                 break;
             } else if (res == 0) {
+                debug("poll timeout");
 #ifdef TPMD_DISCONNECT_IDLE_CLIENTS	    
                 info("connection closed due to inactivity");
                 close(fh);

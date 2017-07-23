@@ -14,6 +14,8 @@
  * $Id: tpm_nv_storage.c 465 2011-07-19 17:20:32Z mast $
  */
 
+#include <stdio.h>
+
 #include "tpm_emulator.h"
 #include "tpm_commands.h"
 #include "tpm_data.h"
@@ -209,6 +211,8 @@ static TPM_RESULT nv_write(TPM_NV_DATA_SENSITIVE *nv, UINT32 offset,
     if (offset + dataSize > nv->pubInfo.dataSize) return TPM_NOSPACE;
     if ((nv->pubInfo.permission.attributes & TPM_NV_PER_WRITEALL)
         && dataSize != nv->pubInfo.dataSize) return TPM_NOT_FULLWRITE;
+
+printf("================ write to (%p) (%d) size (%d)\n", tpmData.permanent.data.nvData, nv->dataIndex + offset, dataSize);
     memcpy(tpmData.permanent.data.nvData + nv->dataIndex + offset,
            data, dataSize);
   }
@@ -313,6 +317,7 @@ TPM_RESULT nv_read(TPM_NV_DATA_SENSITIVE *nv,  UINT32 offset,
     *outDataSize = inDataSize;
     *data = tpm_malloc(*outDataSize);
     if (*data == NULL) return TPM_FAIL;
+printf("================ read from (%p) (%d) size (%d)\n", tpmData.permanent.data.nvData, nv->dataIndex + offset, inDataSize);
     memcpy(*data, tpmData.permanent.data.nvData + nv->dataIndex + offset,
            inDataSize);
   }
